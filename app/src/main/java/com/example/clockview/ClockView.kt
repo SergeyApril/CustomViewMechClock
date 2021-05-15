@@ -1,6 +1,7 @@
 package com.example.clockview
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -9,16 +10,37 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-class clock @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class ClockView : View{
+    constructor(context: Context) : this(context, null){
+       init(null,context)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0){
+        init(attrs,context)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr){
+        init(attrs,context)
+    }
+    private var colorHour : Int  =  Color.BLUE
+    private var colorMinute : Int = Color.BLUE
+    private var colorSecond : Int = Color.BLUE
+ private fun init(attrs: AttributeSet?,context: Context){
+     Log.d("init","ia tut")
+     var a: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.ClockView)
+         colorHour = a.getColor(R.styleable.ClockView_color_hour, Color.BLACK)
+     var b = colorHour
+     Log.d("init","Znachenie coloroHour = $colorHour a b= $b")
+         colorMinute = a.getColor(R.styleable.ClockView_color_minute, Color.BLUE)
+         colorSecond = a.getColor(R.styleable.ClockView_color_second, Color.GREEN)
+         a.recycle()
+
+ }
 
     private val circlePaint : Paint = Paint().apply {
         color = Color.BLACK
@@ -26,19 +48,21 @@ class clock @JvmOverloads constructor(
         style = Paint.Style.STROKE
     }
     private val scaleForCircle: Paint = Paint().apply {
-        color = Color.BLACK
         isAntiAlias = true
         style = Paint.Style.STROKE
         strokeWidth = 4f
     }
     private val scaleForSecond: Paint = Paint().apply {
-        color = Color.BLUE
         isAntiAlias = true
         style = Paint.Style.STROKE
         strokeWidth = 2f
     }
     private val scaleForMinute: Paint = Paint().apply {
-        color = Color.GREEN
+        isAntiAlias = true
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+    }
+    private val scaleForHour: Paint = Paint().apply {
         isAntiAlias = true
         style = Paint.Style.STROKE
         strokeWidth = 2f
@@ -63,7 +87,6 @@ class clock @JvmOverloads constructor(
         return 0.0F
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.save()
@@ -91,17 +114,20 @@ class clock @JvmOverloads constructor(
             canvas.drawLine(xStart, yStart, xEnd, yEnd, scaleForCircle)
         }
         var calendar = Calendar.getInstance()
-            xEnd =  onCalculateCoordinate(calendar.get(Calendar.SECOND),maxValueMinute.toDouble(),200f,1)
-            yEnd = onCalculateCoordinate(calendar.get(Calendar.SECOND),maxValueMinute.toDouble(),200f,2)
-            canvas.drawLine(0f, 0f, xEnd, yEnd, scaleForSecond)
+        xEnd =  onCalculateCoordinate(calendar.get(Calendar.SECOND),maxValueMinute.toDouble(),200f,1)
+        yEnd = onCalculateCoordinate(calendar.get(Calendar.SECOND),maxValueMinute.toDouble(),200f,2)
+        scaleForSecond.color = colorSecond
+        scaleForMinute.color= colorMinute
+        scaleForHour.color = colorHour
+        canvas.drawLine(0f, 0f, xEnd, yEnd, scaleForSecond)
 
         var df = SimpleDateFormat("h")
         calendar.timeZone = TimeZone.getDefault()
         df.timeZone = TimeZone.getTimeZone("Europe/Moscow")
         Log.d("NowTime",df.format(calendar.time))
-        xEnd =  onCalculateCoordinate(df.format(calendar.time).toInt(),maxValueHour.toDouble(),150f,1)
-        yEnd = onCalculateCoordinate(df.format(calendar.time).toInt(),maxValueHour.toDouble(),150f,2)
-        canvas.drawLine(0f, 0f, xEnd, yEnd, scaleForCircle)
+        xEnd =  onCalculateCoordinate(df.format(calendar.time).toInt(),maxValueHour.toDouble(),140f,1)
+        yEnd = onCalculateCoordinate(df.format(calendar.time).toInt(),maxValueHour.toDouble(),140f,2)
+        canvas.drawLine(0f, 0f, xEnd, yEnd, scaleForHour)
         xEnd =  onCalculateCoordinate(calendar.get(Calendar.MINUTE),maxValueMinute.toDouble(),160f,1)
         yEnd = onCalculateCoordinate(calendar.get(Calendar.MINUTE),maxValueMinute.toDouble(),160f,2)
         canvas.drawLine(0f, 0f, xEnd, yEnd, scaleForMinute)

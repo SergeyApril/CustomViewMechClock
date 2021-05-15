@@ -6,8 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-  <com.example.clockview.clock
+  <com.example.clockview.ClockView
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"/>
+      android:layout_height="wrap_content"
+      app:color_hour="#FF0048"
+      app:color_minute="#005EFF"
+      app:color_second="#FF0099" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

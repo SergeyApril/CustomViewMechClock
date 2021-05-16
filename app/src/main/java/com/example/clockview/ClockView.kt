@@ -86,6 +86,18 @@ class ClockView : View{
 
         return 0.0F
     }
+    fun reDraw(){
+        invalidate()
+    }
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d("SecondPotok","ia v nachale vtorogo potoka")
+        Thread(Runnable{
+            while (true){
+                Thread.sleep(1000)
+                reDraw()
+        }}).start()
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -131,7 +143,7 @@ class ClockView : View{
         xEnd =  onCalculateCoordinate(calendar.get(Calendar.MINUTE),maxValueMinute.toDouble(),160f,1)
         yEnd = onCalculateCoordinate(calendar.get(Calendar.MINUTE),maxValueMinute.toDouble(),160f,2)
         canvas.drawLine(0f, 0f, xEnd, yEnd, scaleForMinute)
-        invalidate()
+       // invalidate()
 
 
         Log.d("Mlog",calendar.get(Calendar.SECOND).toString())
